@@ -24,6 +24,7 @@ namespace Battlefield_2042_Performance_fix
             if (PID > 0)
             {
                 RunOptimisations();
+                return;
             }
 
             Launch2042();
