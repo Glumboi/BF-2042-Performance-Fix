@@ -15,7 +15,7 @@ namespace Battlefield_2042_Performance_fix.Core
         static List<string> replacedStrings = new List<string>();
 
         static readonly string[] linesForOptimisation =
-{
+        {
             "GstRender.ShadowQuality",      //0
             "GstRender.TransparentShadows", //1
             "GstRender.WeaponDOF",          //2
