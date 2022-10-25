@@ -1,8 +1,10 @@
-﻿using Memory;
+﻿using Battlefield_2042_Performance_fix.Core;
+using Memory;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -12,13 +14,31 @@ namespace Battlefield_2042_Performance_fix
 {
     internal class Program
     {
-        static readonly string[] processNames = { "NVDisplay.Container", "nvcontainer" };
+        static readonly string[] processNames =
+        {
+            "NVDisplay.Container",
+            "nvcontainer"
+        };
+
         static readonly Mem _m = new Mem();
         static ProcessPriorityClass newPriority = ProcessPriorityClass.High;
 
         static void Main(string[] args)
         {
+            var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            var subFolderPath = Path.Combine(path, "Battlefield 2042\\settings");
+
+            BF2042Config config = new BF2042Config(subFolderPath);
+
             PutDebug("Start!");
+            PutDebug("Optimising Config file...");
+
+            while(!ConfigFile.OptimiseSettings(config))
+            {
+
+            }
+
+            PutDebug("Done optimising the Config, starting the game with high process priority...");
 
             int PID = _m.GetProcIdFromName("BF2042");
             if (PID > 0)
@@ -37,7 +57,7 @@ namespace Battlefield_2042_Performance_fix
         static void RunOptimisations()
         {
             List<Process> processes = Processes();
-            PutDebug(processes.Count + " processed found");
+            PutDebug(processes.Count + " processes found");
             foreach (Process proc in processes)
             {
                 PutDebug("New process found");
@@ -74,7 +94,7 @@ namespace Battlefield_2042_Performance_fix
             foreach (string _p in processNames)
             {
                 var processes = Process.GetProcessesByName(_p);
-                foreach(Process p in processes)
+                foreach (Process p in processes)
                 {
                     rtrnList.Add(p);
                 }
