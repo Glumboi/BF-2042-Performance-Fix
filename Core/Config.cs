@@ -23,18 +23,18 @@ namespace Battlefield_2042_Performance_fix.Core
             "GstRender.Enlighten"           //4
         };
 
-        public static string[] GetConfigContent(BF2042Config config)
+        private static string[] GetConfigContent(BF2042 config)
         {
-            var content = File.ReadAllLines(config.Path + "\\PROFSAVE_profile");
+            var content = File.ReadAllLines(config.SavePath + "\\PROFSAVE_profile");
             Content = content;
             return content;
         }
 
-        public static bool OptimiseSettings(BF2042Config config)
+        public static bool OptimiseSettings(BF2042 config)
         {
             string[] content = GetConfigContent(config);
 
-            var writer = new StreamWriter(config.Path + "\\PROFSAVE_profile");
+            var writer = new StreamWriter(config.SavePath + "\\PROFSAVE_profile");
             for (int i = 0; i < content.Length; i++)
             {
                 string line = content[i];
@@ -54,16 +54,6 @@ namespace Battlefield_2042_Performance_fix.Core
 
             writer.Close();
             return true;
-        }
-    }
-
-    public struct BF2042Config
-    {
-        public string Path { get; private set; }
-
-        public BF2042Config(string path)
-        {
-            Path = path;
         }
     }
 }

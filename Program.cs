@@ -25,18 +25,30 @@ namespace Battlefield_2042_Performance_fix
 
         static void Main(string[] args)
         {
-            var path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            var subFolderPath = Path.Combine(path, "Battlefield 2042\\settings");
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string subFolderPath = Path.Combine(path, "Battlefield 2042\\settings");
+            string gameLoc = string.Empty;
 
-            BF2042Config config = new BF2042Config(subFolderPath);
+            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\EA Games\Battlefield 2042");
+
+            if (key != null)
+            {
+                gameLoc = key.GetValue("Install Dir").ToString();
+            }
+
+            BF2042 game = new BF2042(gameLoc, subFolderPath);
+            UserConfig userConfig = new UserConfig();
 
             PutDebug("Start!");
             PutDebug("Optimising Config file...");
 
-            while(!ConfigFile.OptimiseSettings(config))
+            while(!ConfigFile.OptimiseSettings(game))
             {
 
             }
+            PutDebug("Creating User.cfg file...");
+
+            userConfig.CreateUserCfg(game);
 
             PutDebug("Done optimising the Config, starting the game with high process priority...");
 
@@ -47,7 +59,7 @@ namespace Battlefield_2042_Performance_fix
                 return;
             }
 
-            Launch2042();
+            Launch2042(game);
 
             Thread.Sleep(20000);
 
@@ -72,19 +84,12 @@ namespace Battlefield_2042_Performance_fix
             Console.ReadLine();*/
         }
 
-        static void Launch2042()
+        static void Launch2042(BF2042 game)
         {
-            string gameLoc = string.Empty;
+            
 
-            RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\EA Games\Battlefield 2042");
-
-            if (key != null)
-            {
-                gameLoc = key.GetValue("Install Dir").ToString();
-            }
-
-            Console.WriteLine("Game path: " + gameLoc);
-            Process.Start(gameLoc + @"\BF2042.exe");
+            Console.WriteLine("Game path: " + game.GamePath);
+            Process.Start(game.GamePath + @"\BF2042.exe");
         }
 
         static List<Process> Processes()
@@ -104,7 +109,7 @@ namespace Battlefield_2042_Performance_fix
         }
 
         static bool debug = true;
-        static void PutDebug(string info = "")
+        public static void PutDebug(string info = "")
         {
             if (debug)
             {

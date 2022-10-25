@@ -189,7 +189,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\BF2042.cs" />
     <Compile Include="Core\Config.cs" />
+    <Compile Include="Core\UserConfig.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
